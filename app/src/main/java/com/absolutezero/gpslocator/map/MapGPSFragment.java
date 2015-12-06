@@ -5,12 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 
 public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
 
@@ -29,9 +28,8 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
     /* Once the google map is ready, setup in here */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
+        Marker marker = MapGPSHelper.addLocation(
+                googleMap, new LatLng(32, 12), new LatLng(12, 32), "In here"
+        );
     }
 }
