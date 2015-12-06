@@ -2,15 +2,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_first_fragment"
-            android:icon="@drawable/ic_one"
-            android:title="First" />
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="@string/locator" />
         <item
             android:id="@+id/nav_second_fragment"
-            android:icon="@drawable/ic_two"
-            android:title="Second" />
-        <item
-            android:id="@+id/nav_third_fragment"
-            android:icon="@drawable/ic_three"
-            android:title="Third" />
+            android:icon="@android:drawable/ic_search_category_default"
+            android:title="@string/filter" />
+
     </group>
 </menu>
