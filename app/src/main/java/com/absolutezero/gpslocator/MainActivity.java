@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
