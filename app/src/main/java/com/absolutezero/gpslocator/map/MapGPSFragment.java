@@ -7,25 +7,26 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.absolutezero.gpslocator.R;
-import com.absolutezero.gpslocator.volley.CustomRequest;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
+import com.absolutezero.gpslocator.utils.ApiMethod;
+import com.absolutezero.gpslocator.volley.VolleyHelper;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
+    private GoogleMap mGoogleMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,10 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
     /* Once the google map is ready, setup in here */
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        /* Once map is ready, assign it to private variable mGoogleMap so others can access it */
+        mGoogleMap = googleMap;
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
         /* Once map is ready then subscribe to the channel */
         /* Instantiate PubNub */
         Pubnub pubnub = new Pubnub(
@@ -49,33 +54,29 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
                 getString(R.string.pub_nub_subscriber_key)
         );
 
+        VolleyHelper volleyHelper = new VolleyHelper(getActivity());
+        volleyHelper.get(ApiMethod.get_locations, null, getLocationResponseListener,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
         /* Subscribe to the demo_tutorial channel */
         try {
             pubnub.subscribe("Channel-n6vdjcnlr", new Callback() {
                 public void successCallback(String channel, Object message) {
                     /* Make a get request since there is new location from database */
-                    RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-                    String url = "http://mapapi-pbb2.rhcloud.com/api/location";
-                    CustomRequest jsObjRequest = new CustomRequest(Request.Method.GET, url, null,
-                            new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Marker marker = MapGPSHelper.addLocation(
-                                            googleMap, new LatLng(32, 12), new LatLng(12, 32), "In here"
-                                    );
-                                }
-                            },
+                    VolleyHelper volleyHelper = new VolleyHelper(getActivity());
+                    volleyHelper.get(ApiMethod.get_locations, null, getLocationResponseListener,
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                    });
 
-                    requestQueue.add(jsObjRequest);
+                                }
+                            });
                 }
-
-
                 public void errorCallback(String channel, PubnubError error) {
                     System.out.println(error.getErrorString());
                 }
@@ -84,6 +85,36 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
             e.printStackTrace();
         }
     }
+
+    private Response.Listener<JSONObject> getLocationResponseListener
+            = new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                JSONArray locations = response.getJSONArray("locations");
+                Double longitude, latitude;
+                LatLng oldLatLng = null;
+
+                for (int i=0; i<locations.length(); i++) {
+                    longitude = Double.valueOf(locations.getJSONObject(i).getString("longitude"));
+                    latitude = Double.valueOf(locations.getJSONObject(i).getString("latitude"));
+                    MapGPSHelper.addLocation(
+                            mGoogleMap,
+                            oldLatLng,
+                            new LatLng(latitude, longitude),
+                            "Was here on " + i + locations.getJSONObject(i).getString("upload_time")
+                    );
+
+                    oldLatLng = new LatLng(latitude, longitude);
+
+                    mGoogleMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(oldLatLng, 12.0f));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
 
 }
