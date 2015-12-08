@@ -23,6 +23,12 @@ public class VolleyHelper {
         mBaseUrl = baseUrl;
     }
 
+    public VolleyHelper(Context c) {
+        mContext = c;
+        mRequestQueue = Volley.newRequestQueue(mContext);
+        mBaseUrl = "http://mapapi-pbb2.rhcloud.com";
+    }
+
     private String constructUrl(String method) {
         return mBaseUrl + "/" + method;
     }
