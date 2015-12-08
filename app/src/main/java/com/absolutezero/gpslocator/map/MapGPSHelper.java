@@ -20,9 +20,11 @@ public class MapGPSHelper {
     public static Marker addLocation(GoogleMap googleMap, LatLng oldLatLng, LatLng newLatLng, String content
     ) {
         int lineWidth = 5;
-        googleMap.addPolyline(
-                new PolylineOptions().add(oldLatLng, newLatLng).width(lineWidth).color(Color.RED)
-        );
+        if (oldLatLng != null) {
+            googleMap.addPolyline(
+                    new PolylineOptions().add(oldLatLng, newLatLng).width(lineWidth).color(Color.RED)
+            );
+        }
 
         return googleMap.addMarker(
                 new MarkerOptions().position(newLatLng).title(content)
