@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">GPSLocator</string>
     <string name="google_maps_key">AIzaSyAihGaODSjvTd_FLbz26-Utte8za5VgZ3I</string>
+    <string name="pub_nub_publisher_key">pub–c–d15beef1–3112–44a9–9bf2-7995a8311b1d</string>
+    <string name="pub_nub_subscriber_key">sub-c-4449a38e-9ce9-11e5-8db0-0619f8945a4f</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
