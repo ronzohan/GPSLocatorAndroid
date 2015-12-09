@@ -22,6 +22,7 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,9 +72,18 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
         try {
             pubnub.subscribe("Channel-n6vdjcnlr", new Callback() {
                 public void successCallback(String channel, Object message) {
+                    /* Set parameters to http request */
+                    JSONObject params = new JSONObject();
+                    try {
+                        params.put("filter_start_date", DateTime.now().toString());
+                        params.put("filter_end_date", DateTime.now().plusDays(1).toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     /* Make a get request since there is new location from database */
                     VolleyHelper volleyHelper = new VolleyHelper(getActivity());
-                    volleyHelper.get(ApiMethod.get_locations, null, getLocationResponseListener,
+                    volleyHelper.get(ApiMethod.get_locations, params, getLocationResponseListener,
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
