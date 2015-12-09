@@ -25,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
     private GoogleMap mGoogleMap;
 
@@ -93,23 +95,28 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
             try {
                 JSONArray locations = response.getJSONArray("locations");
                 Double longitude, latitude;
+                String dateTime;
                 LatLng oldLatLng = null;
+                ArrayList<LatLng> latLngs = new ArrayList<>();
 
                 for (int i=0; i<locations.length(); i++) {
                     longitude = Double.valueOf(locations.getJSONObject(i).getString("longitude"));
                     latitude = Double.valueOf(locations.getJSONObject(i).getString("latitude"));
+//                    dateTime =
+//
+//                    latLngs.add(new LatLng(latitude, longitude));
                     MapGPSHelper.addLocation(
                             mGoogleMap,
                             oldLatLng,
                             new LatLng(latitude, longitude),
-                            "Was here on " + i + locations.getJSONObject(i).getString("upload_time")
+                            "Was here on " + locations.getJSONObject(i).getString("upload_time")
                     );
 
                     oldLatLng = new LatLng(latitude, longitude);
-
-                    mGoogleMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(oldLatLng, 12.0f));
                 }
+
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(oldLatLng, 17.0f));
+                MapGPSHelper.addRoute(mGoogleMap, latLngs);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

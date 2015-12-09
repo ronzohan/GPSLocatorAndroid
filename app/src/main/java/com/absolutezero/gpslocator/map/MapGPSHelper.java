@@ -6,7 +6,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.List;
 
 public class MapGPSHelper {
     /**
@@ -29,5 +32,16 @@ public class MapGPSHelper {
         return googleMap.addMarker(
                 new MarkerOptions().position(newLatLng).title(content)
         );
+    }
+
+    public static void addRoute(GoogleMap googleMap, List<LatLng> latLngs) {
+        Polyline route = googleMap.addPolyline(new PolylineOptions().width(5).color(Color.RED).geodesic(true));
+        route.setPoints(latLngs);
+
+        for (int i=0; i<latLngs.size(); i++) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLngs.get(i))
+                    .title("Hello world"));
+        }
     }
 }
