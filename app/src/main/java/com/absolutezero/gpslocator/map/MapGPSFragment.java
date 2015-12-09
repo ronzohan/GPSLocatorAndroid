@@ -117,10 +117,15 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
                 oldMarker = MapGPSHelper.addLocation(mGoogleMap, latLngs);
 
                 float cameraZoom = 17.0f;
-                mGoogleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size() - 1 ).getLatLng(),
-                                cameraZoom)
-                );
+
+                /* Check if there is data, if there is then update the camera to there,
+                else do nothing */
+                if (latLngs.size() >= 1)
+                    mGoogleMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size() - 1 ).getLatLng(),
+                                    cameraZoom)
+                    );
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
