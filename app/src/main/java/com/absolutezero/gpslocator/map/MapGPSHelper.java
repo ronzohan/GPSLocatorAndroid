@@ -8,7 +8,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.util.ArrayList;
 
 public class MapGPSHelper {
@@ -33,14 +32,17 @@ public class MapGPSHelper {
             }
 
             /* Set marker here once a line has been made */
+            String title = "Was here at " + mapLocations.get(i).getDateTimeString();
             if (i == mapLocations.size() - 1)
                 marker = googleMap.addMarker(
-                    new MarkerOptions().position(mapLocations.get(i).getLatLng()).title(mapLocations.get(i).getDateTime()));
+                    new MarkerOptions()
+                            .position(mapLocations.get(i).getLatLng())
+                            .title(title));
             else
                 marker = googleMap.addMarker(
                         new MarkerOptions()
                                 .position(mapLocations.get(i).getLatLng())
-                                .title(mapLocations.get(i).getDateTime())
+                                .title(title)
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.mm_20_blue)));
 
             oldMapLocation = mapLocations.get(i);
