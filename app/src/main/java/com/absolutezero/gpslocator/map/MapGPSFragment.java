@@ -15,7 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 
 public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
     private GoogleMap mGoogleMap;
+    private Marker oldMarker = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,27 +98,29 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
                 JSONArray locations = response.getJSONArray("locations");
                 Double longitude, latitude;
                 String dateTime;
-                LatLng oldLatLng = null;
-                ArrayList<LatLng> latLngs = new ArrayList<>();
+                ArrayList<MapLocation> latLngs = new ArrayList<>();
+
+                /* if old marker is set and a new location is found,
+                change the icon of the old marker */
+                if (oldMarker != null) {
+                    oldMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.mm_20_blue));
+                }
 
                 for (int i=0; i<locations.length(); i++) {
                     longitude = Double.valueOf(locations.getJSONObject(i).getString("longitude"));
                     latitude = Double.valueOf(locations.getJSONObject(i).getString("latitude"));
-//                    dateTime =
-//
-//                    latLngs.add(new LatLng(latitude, longitude));
-                    MapGPSHelper.addLocation(
-                            mGoogleMap,
-                            oldLatLng,
-                            new LatLng(latitude, longitude),
-                            "Was here on " + locations.getJSONObject(i).getString("upload_time")
-                    );
+                    dateTime = String.valueOf(locations.getJSONObject(i).getString("upload_time"));
 
-                    oldLatLng = new LatLng(latitude, longitude);
+                    latLngs.add(new MapLocation(latitude, longitude, dateTime));
                 }
 
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(oldLatLng, 17.0f));
-                MapGPSHelper.addRoute(mGoogleMap, latLngs);
+                oldMarker = MapGPSHelper.addLocation(mGoogleMap, latLngs);
+
+                float cameraZoom = 17.0f;
+                mGoogleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size() - 1 ).getLatLng(),
+                                cameraZoom)
+                );
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -2,46 +2,49 @@ package com.absolutezero.gpslocator.map;
 
 import android.graphics.Color;
 
+import com.absolutezero.gpslocator.R;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class MapGPSHelper {
     /**
      *
      * @param googleMap The google map reference that will be edited
-     * @param oldLatLng The old latitude and longitude coordinates recorded
-     * @param newLatLng The new latitude and longitude coordinates recorded
-     * @param content Content to be displayed on the marker
+     * @param mapLocations List of locations to be plotted on the map
      * @return The marker created on the endpoint on adding new line on the map
      */
-    public static Marker addLocation(GoogleMap googleMap, LatLng oldLatLng, LatLng newLatLng, String content
+    public static Marker addLocation(GoogleMap googleMap, ArrayList<MapLocation> mapLocations
     ) {
         int lineWidth = 5;
-        if (oldLatLng != null) {
-            googleMap.addPolyline(
-                    new PolylineOptions().add(oldLatLng, newLatLng).width(lineWidth).color(Color.RED)
-            );
+        MapLocation oldMapLocation = null;
+        Marker marker = null;
+
+        for (int i=0;i<mapLocations.size();i++) {
+            if (oldMapLocation != null) {
+                googleMap.addPolyline(
+                    new PolylineOptions().add(
+                            oldMapLocation.getLatLng(),
+                            mapLocations.get(i).getLatLng()).width(lineWidth).color(Color.RED));
+            }
+
+            /* Set marker here once a line has been made */
+            if (i == mapLocations.size() - 1)
+                marker = googleMap.addMarker(
+                    new MarkerOptions().position(mapLocations.get(i).getLatLng()).title(mapLocations.get(i).getDateTime()));
+            else
+                marker = googleMap.addMarker(
+                        new MarkerOptions()
+                                .position(mapLocations.get(i).getLatLng())
+                                .title(mapLocations.get(i).getDateTime())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mm_20_blue)));
+
+            oldMapLocation = mapLocations.get(i);
         }
-
-        return googleMap.addMarker(
-                new MarkerOptions().position(newLatLng).title(content)
-        );
-    }
-
-    public static void addRoute(GoogleMap googleMap, List<LatLng> latLngs) {
-        Polyline route = googleMap.addPolyline(new PolylineOptions().width(5).color(Color.RED).geodesic(true));
-        route.setPoints(latLngs);
-
-        for (int i=0; i<latLngs.size(); i++) {
-            googleMap.addMarker(new MarkerOptions()
-                    .position(latLngs.get(i))
-                    .title("Hello world"));
-        }
+        return marker;
     }
 }
