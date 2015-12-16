@@ -13,12 +13,16 @@ import android.view.MenuItem;
 
 import com.absolutezero.gpslocator.map.MapGPSFragment;
 
+/**
+ * This is the main entry point as defined in the AndroidManifest.xml
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /** Things that are done in here are just all setting up the main activity screen **/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
