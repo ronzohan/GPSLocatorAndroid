@@ -21,6 +21,7 @@ public class MapLocation {
     public MapLocation(double latitude, double longitude, String dateTime) {
         this.mLatLng = new LatLng(latitude, longitude);
 
+        /* Try to format the given date */
         try {
             this.dateTime = formatter.parseDateTime(dateTime);
         }
