@@ -18,6 +18,12 @@ public class MapLocation {
 
     private static final String TAG = "MapLocation";
 
+    /**
+     * Setup map location of the user
+     * @param latitude Latitude of the location
+     * @param longitude Longitude of the location
+     * @param dateTime  Datetime which location was recorded
+     */
     public MapLocation(double latitude, double longitude, String dateTime) {
         this.mLatLng = new LatLng(latitude, longitude);
 
