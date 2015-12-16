@@ -8,6 +8,9 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * Model representation of map location object
+ */
 public class MapLocation {
     private LatLng mLatLng;
     private DateTime dateTime;
