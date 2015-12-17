@@ -1,7 +1,5 @@
 package com.absolutezero.gpslocator.map;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.joda.time.DateTime;
@@ -16,8 +14,6 @@ public class MapLocation {
     private DateTime dateTime;
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
-    private static final String TAG = "MapLocation";
-
     /**
      * Setup map location of the user
      * @param latitude Latitude of the location
@@ -26,15 +22,7 @@ public class MapLocation {
      */
     public MapLocation(double latitude, double longitude, String dateTime) {
         this.mLatLng = new LatLng(latitude, longitude);
-
-        /* Try to format the given date */
-        try {
-            this.dateTime = formatter.parseDateTime(dateTime);
-        }
-        catch (IllegalArgumentException e) {
-            Log.e(TAG, "MapLocation: Error parsing date");
-        }
-
+        this.dateTime = formatter.parseDateTime(dateTime);
     }
 
     public LatLng getLatLng() {

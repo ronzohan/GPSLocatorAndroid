@@ -121,7 +121,18 @@ public class MapGPSFragment extends MapFragment implements OnMapReadyCallback {
                     latitude = Double.valueOf(locations.getJSONObject(i).getString("latitude"));
                     dateTime = String.valueOf(locations.getJSONObject(i).getString("upload_time"));
 
-                    latLngs.add(new MapLocation(latitude, longitude, dateTime));
+                    /* Try to format the given date */
+                    try {
+                        latLngs.add(new MapLocation(latitude, longitude, dateTime));
+                    }
+                    catch (IllegalArgumentException e) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Error on parsing upload time.",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+
                 }
 
                 oldMarker = MapGPSHelper.addLocation(mGoogleMap, latLngs);
